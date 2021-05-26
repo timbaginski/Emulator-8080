@@ -46,6 +46,7 @@ uint8_t next_byte(State8080 *state) {
 int emulate(State8080 *state) {
   unsigned char *opcode = &state->memory[state->pc]; 
   uint16_t register_pair; 
+  uint16_t answer; 
 
   switch(*opcode) {
     case 0x00:
@@ -70,7 +71,7 @@ int emulate(State8080 *state) {
         break;
    
     case 0x04:
-        uint16_t answer = state->b + 1; 
+        answer = state->b + 1; 
 	state->cc.z = ((answer & 0xff) == 0); 
         state->cc.s = ((answer & 0x80) != 0); 
         state->cc.p = parity(answer & 0xff); 
@@ -79,7 +80,7 @@ int emulate(State8080 *state) {
         break;	
   
     case 0x05: 
-        uint16_t answer = state->b - 1; 
+        answer = state->b - 1; 
         state->cc.z = ((answer & 0xff) == 0);
 	state->cc.s = ((answer & 0x80) != 0);
         state->cc.p = parity(answer & 0xff);
@@ -89,7 +90,21 @@ int emulate(State8080 *state) {
     
     case 0x06: 
         state->b = next_byte(state); 
+	break;
+
+    case 0x07: 
+        state->cc.cy = state->a >> 7; 
+        state->a = (state->a << 1) | state->cc.cy; 
+        break; 
+
+    case 0x08: 
 	break; 
+
+    case 0x09: 
+        register_pair = make_word(state->h, state->l) + make_word(state->b, state->c); 
+	state->h = register_pair >> 8; 
+        state->l = register_pair & 0xff; 
+        break; 	
   }
    
   
