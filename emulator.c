@@ -105,6 +105,20 @@ int emulate(State8080 *state) {
 	state->h = register_pair >> 8; 
         state->l = register_pair & 0xff; 
         break; 	
+
+    case 0x0a:
+        register_pair = make_word(state->b, state->c); 
+        state->a = state->memory[register_pair]; 	
+	break;
+
+    case 0x0b: 
+        register_pair = make_word(state->b, state->c); 
+        register_pair--; 
+        state->b = (register_pair >> 8); 
+        state->c = register_pair & 0xff; 
+        break;
+    
+    	
   }
    
   
