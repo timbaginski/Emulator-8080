@@ -127,6 +127,21 @@ int emulate(State8080 *state) {
         flags_arithmetic(state, answer);  
 	state->c = (answer & 0xff); 
 	break;
+    
+    case 0x0d: 
+	answer = state->c - 1; 
+	flags_arithmetic(state, answer); 
+	state->c = (answer & 0xff); 
+	break; 
+
+    case 0x0e: 
+        state->c = next_byte(state); 
+	break; 
+
+    case 0x0f:
+        state->cc.cy = state->a << 7; 
+        state->a = (state->a << 1) | (state->cc.cy << 7); 
+	break;
   }
    
   
