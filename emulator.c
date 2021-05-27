@@ -40,6 +40,16 @@ uint8_t next_byte(State8080 *state) {
 }
 
 /* 
+ * purpose: set flags after arithmetic group
+ */
+void flags_arithmetic(State8080 *state, uint16_t answer){
+  state->cc.z = ((answer & 0xff) == 0);
+  state->cc.s = ((answer & 0x80) != 0);
+  state->cc.p = parity(answer & 0xff);
+  state->cc.ac = carry(4, state->b, 1);
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -72,19 +82,13 @@ int emulate(State8080 *state) {
    
     case 0x04:
         answer = state->b + 1; 
-	state->cc.z = ((answer & 0xff) == 0); 
-        state->cc.s = ((answer & 0x80) != 0); 
-        state->cc.p = parity(answer & 0xff); 
-	state->cc.ac = carry(4, state->b, 1); 
+	flags_arithmetic(state, answer); 
         state->b = (answer & 0xff);      
         break;	
   
     case 0x05: 
         answer = state->b - 1; 
-        state->cc.z = ((answer & 0xff) == 0);
-	state->cc.s = ((answer & 0x80) != 0);
-        state->cc.p = parity(answer & 0xff);
-	state->cc.ac = carry(4, state->b, 1);
+        flags_arithmetic(state, answer); 
 	state->b = (answer & 0xff);
 	break;
     
@@ -118,7 +122,11 @@ int emulate(State8080 *state) {
         state->c = register_pair & 0xff; 
         break;
     
-    	
+    case 0x0c: 
+	answer = state->c + 1;
+        flags_arithmetic(state, answer);  
+	state->c = (answer & 0xff); 
+	break;
   }
    
   
