@@ -86,22 +86,28 @@ void dcr(State8080 *state, uint8_t *a){
 }
 
 /* 
+ * implement the LXI opcodes by taking state and the necessary register
+ */
+void lxi(State8080 *state, uint8_t *a, uint8_t *b){
+  *a = state->memory[state->pc + 2];
+  *b = state->memory[state->pc + 1]; 
+  state->pc += 2;
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
 int emulate(State8080 *state) {
   unsigned char *opcode = &state->memory[state->pc]; 
   uint16_t register_pair; 
-  //uint16_t answer; 
 
   switch(*opcode) {
     case 0x00:
         break; 
     
     case 0x01:
-        state->b = opcode[2]; 
-	state->c = opcode[1]; 
-	state->pc += 2; 
+	lxi(state, &state->b, &state->c); 
 	break;
     
     case 0x02: 
@@ -171,9 +177,7 @@ int emulate(State8080 *state) {
 	break; 
 
     case 0x11: 
-        state->d = opcode[2]; 
-	state->e = opcode[1];
-	state->pc += 2;
+	lxi(state, &state->d, &state->e); 
         break;	
 
     case 0x12:
