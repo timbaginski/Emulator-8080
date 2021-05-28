@@ -58,6 +58,16 @@ void stax(State8080 *state, uint8_t a, uint8_t b, uint8_t c){
 }
 
 /* 
+ * implement the INX opcodes by taking necessary registers
+ */
+void inx(uint8_t *a, uint8_t *b){
+  uint16_t register_pair = make_word(*a, *b); 
+  register_pair++; 
+  *a = register_pair >> 8; 
+  *b = register_pair & 0xff; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -81,10 +91,7 @@ int emulate(State8080 *state) {
         break; 
     
     case 0x03: 
-        register_pair = make_word(state->b, state->c); 
-        register_pair++; 
-        state->b = register_pair >> 8; 
-        state->c = register_pair & 0xff; 
+	inx(&state->b, &state->c);  
         break;
    
     case 0x04:
@@ -162,6 +169,10 @@ int emulate(State8080 *state) {
     case 0x12:
         stax(state, state->d, state->e, state->a); 	
 	break;
+   
+    case 0x13: 
+        inx(&state->d, &state->e);
+	break; 
   }
    
   
