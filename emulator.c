@@ -95,6 +95,13 @@ void lxi(State8080 *state, uint8_t *a, uint8_t *b){
 }
 
 /* 
+ * implement the MVI opcode using state and the appropriate register
+ */
+void mvi(State8080 *state, uint8_t *a){
+  *a = next_byte(state); 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -127,7 +134,7 @@ int emulate(State8080 *state) {
 	break;
     
     case 0x06: 
-        state->b = next_byte(state); 
+        mvi(state, &state->b);  
 	break;
 
     case 0x07: 
@@ -165,7 +172,7 @@ int emulate(State8080 *state) {
 	break; 
 
     case 0x0e: 
-        state->c = next_byte(state); 
+        mvi(state, &state->c); 
 	break; 
 
     case 0x0f:
