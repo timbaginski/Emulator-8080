@@ -75,6 +75,15 @@ void inr(State8080 *state, uint8_t *a){
   flags_arithmetic(state, answer);
   *a = (answer & 0xff);
 }
+ 
+/* 
+ * implement the DCR opcodes by taking state and necessary register
+ */
+void dcr(State8080 *state, uint8_t *a){
+  uint16_t answer = *a - 1;
+  flags_arithmetic(state, answer);
+  *a = (answer & 0xff);
+}
 
 /* 
  * purpose: obtain the current opcode, emulate accordingly 
@@ -83,7 +92,7 @@ void inr(State8080 *state, uint8_t *a){
 int emulate(State8080 *state) {
   unsigned char *opcode = &state->memory[state->pc]; 
   uint16_t register_pair; 
-  uint16_t answer; 
+  //uint16_t answer; 
 
   switch(*opcode) {
     case 0x00:
@@ -108,9 +117,7 @@ int emulate(State8080 *state) {
         break;	
   
     case 0x05: 
-        answer = state->b - 1; 
-        flags_arithmetic(state, answer); 
-	state->b = (answer & 0xff);
+	dcr(state, &state->b); 
 	break;
     
     case 0x06: 
@@ -148,9 +155,7 @@ int emulate(State8080 *state) {
 	break;
     
     case 0x0d: 
-	answer = state->c - 1; 
-	flags_arithmetic(state, answer); 
-	state->c = (answer & 0xff); 
+	dcr(state, &state->c); 
 	break; 
 
     case 0x0e: 
@@ -182,9 +187,12 @@ int emulate(State8080 *state) {
     case 0x14:
         inr(state, &state->d);
 	break; 
+
+    case 0x15: 
+	dcr(state, &state->d); 
+	break; 
   }
    
-  
   state->pc += 1; 
   return 0; 
 }
