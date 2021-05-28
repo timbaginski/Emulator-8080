@@ -50,6 +50,14 @@ void flags_arithmetic(State8080 *state, uint16_t answer){
 }
 
 /* 
+ * implement the STAX opcodes by taking necessary registers 
+ */
+void stax(State8080 *state, uint8_t a, uint8_t b, uint8_t c){
+  uint16_t register_pair = make_word(a, b); 
+  state->memory[register_pair] = c; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -69,8 +77,7 @@ int emulate(State8080 *state) {
 	break;
     
     case 0x02: 
-	register_pair = make_word(state->b, state->c); 
-	state->memory[register_pair] = state->a;
+	stax(state, state->b, state->c, state->a); 
         break; 
     
     case 0x03: 
@@ -141,6 +148,19 @@ int emulate(State8080 *state) {
     case 0x0f:
         state->cc.cy = state->a << 7; 
         state->a = (state->a << 1) | (state->cc.cy << 7); 
+	break;
+
+    case 0x10: 
+	break; 
+
+    case 0x11: 
+        state->d = opcode[2]; 
+	state->e = opcode[1];
+	state->pc += 2;
+        break;	
+
+    case 0x12:
+        stax(state, state->d, state->e, state->a); 	
 	break;
   }
    
