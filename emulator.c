@@ -68,6 +68,15 @@ void inx(uint8_t *a, uint8_t *b){
 }
 
 /* 
+ * implement the INR opcodes by taking state and necessary register 
+ */
+void inr(State8080 *state, uint8_t *a){
+  uint16_t answer = *a + 1;
+  flags_arithmetic(state, answer);
+  *a = (answer & 0xff);
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -95,9 +104,7 @@ int emulate(State8080 *state) {
         break;
    
     case 0x04:
-        answer = state->b + 1; 
-	flags_arithmetic(state, answer); 
-        state->b = (answer & 0xff);      
+	inr(state, &state->b);       
         break;	
   
     case 0x05: 
@@ -137,9 +144,7 @@ int emulate(State8080 *state) {
         break;
     
     case 0x0c: 
-	answer = state->c + 1;
-        flags_arithmetic(state, answer);  
-	state->c = (answer & 0xff); 
+	inr(state, &state->c);  
 	break;
     
     case 0x0d: 
@@ -172,6 +177,10 @@ int emulate(State8080 *state) {
    
     case 0x13: 
         inx(&state->d, &state->e);
+	break; 
+
+    case 0x14:
+        inr(state, &state->d);
 	break; 
   }
    
