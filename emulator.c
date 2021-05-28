@@ -101,6 +101,14 @@ void mvi(State8080 *state, uint8_t *a){
   *a = next_byte(state); 
 }
 
+/*
+ * implement the RLC opcode using state
+ */ 
+void rlc(State8080 *state){
+  state->cc.cy = state->a >> 7;
+  state->a = (state->a << 1) | state->cc.cy;
+}
+
 /* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
@@ -138,8 +146,7 @@ int emulate(State8080 *state) {
 	break;
 
     case 0x07: 
-        state->cc.cy = state->a >> 7; 
-        state->a = (state->a << 1) | state->cc.cy; 
+        rlc(state); 
         break; 
 
     case 0x08: 
