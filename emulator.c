@@ -254,6 +254,33 @@ int emulate(State8080 *state) {
     case 0x17: 
         ral(state); 
 	break; 
+
+    case 0x18:
+	break; 
+
+    case 0x19: 
+	dad(state, &state->h, &state->l, &state->d, &state->e); 
+	break; 
+
+    case 0x1a:
+        ldax(state, &state->a, &state->d, &state->e); 
+	break; 
+
+    case 0x1b: 
+        dcx(&state->d, &state->e); 
+	break; 
+
+    case 0x1c:
+        inr(state, &state->e); 
+	break; 
+
+    case 0x1d: 
+	dcr(state, &state->e);
+        break; 
+
+    case 0x1e: 
+        mvi(state, &state->h); 
+        break; 	
   }
    
   state->pc += 1; 
