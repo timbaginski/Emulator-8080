@@ -110,6 +110,16 @@ void rlc(State8080 *state){
 }
 
 /* 
+ * implement the DAD opcode by taking state and the necessary registers
+ */
+void dad(State8080 *state, uint8_t *a, uint8_t *b, uint8_t *c, uint8_t *d){
+  uint16_t register_pair = make_word(*a, *b) + make_word(*c, *d);
+  state->cc.cy = ((register_pair >> 16) & 1);  
+  *a = register_pair >> 8;
+  *b = register_pair & 0xff;
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -153,9 +163,7 @@ int emulate(State8080 *state) {
 	break; 
 
     case 0x09: 
-        register_pair = make_word(state->h, state->l) + make_word(state->b, state->c); 
-	state->h = register_pair >> 8; 
-        state->l = register_pair & 0xff; 
+	dad(state, &state->h, &state->l, &state->b, &state->c); 
         break; 	
 
     case 0x0a:
