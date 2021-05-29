@@ -120,6 +120,13 @@ void dad(State8080 *state, uint8_t *a, uint8_t *b, uint8_t *c, uint8_t *d){
 }
 
 /* 
+ * implement the LDAX opcode by taking the necessary registers
+ */
+void ldax(State8080 *state, uint8_t *a, uint8_t *b, uint8_t *c){
+  *a = state->memory[make_word(*b, *c)]; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -167,8 +174,7 @@ int emulate(State8080 *state) {
         break; 	
 
     case 0x0a:
-        register_pair = make_word(state->b, state->c); 
-        state->a = state->memory[register_pair]; 	
+	ldax(state, &state->a, &state->b, &state->c); 	
 	break;
 
     case 0x0b: 
