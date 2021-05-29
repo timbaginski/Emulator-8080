@@ -127,12 +127,29 @@ void ldax(State8080 *state, uint8_t *a, uint8_t *b, uint8_t *c){
 }
 
 /* 
+ * implement the dcx opcode by taking the necessary registers
+ */
+void dcx(uint8_t *a, uint8_t *b){
+  uint16_t register_pair = make_word(*a, *b); 
+  register_pair--; 
+  *a = register_pair >> 8; 
+  *b = register_pair & 0xff;   
+}
+
+/* 
+ * implement the RRC opcode
+ */
+void rrc(State8080 *state){
+  state->cc.cy = state->a << 7;
+  state->a = (state->a << 1) | (state->cc.cy << 7);
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
 int emulate(State8080 *state) {
   unsigned char *opcode = &state->memory[state->pc]; 
-  uint16_t register_pair; 
 
   switch(*opcode) {
     case 0x00:
@@ -178,10 +195,7 @@ int emulate(State8080 *state) {
 	break;
 
     case 0x0b: 
-        register_pair = make_word(state->b, state->c); 
-        register_pair--; 
-        state->b = (register_pair >> 8); 
-        state->c = register_pair & 0xff; 
+	dcx(&state->b, &state->c);  
         break;
     
     case 0x0c: 
@@ -197,8 +211,7 @@ int emulate(State8080 *state) {
 	break; 
 
     case 0x0f:
-        state->cc.cy = state->a << 7; 
-        state->a = (state->a << 1) | (state->cc.cy << 7); 
+	rrc(state); 
 	break;
 
     case 0x10: 
