@@ -145,6 +145,16 @@ void rrc(State8080 *state){
 }
 
 /* 
+ * implement the RAL opcode 
+ */
+void ral(State8080 *state){
+  uint8_t temp; 
+  temp = state->cc.cy; 
+  state->cc.cy = state->a >> 7;
+  state->a = (state->a << 1) | temp;  
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -235,6 +245,14 @@ int emulate(State8080 *state) {
 
     case 0x15: 
 	dcr(state, &state->d); 
+	break; 
+
+    case 0x16: 
+        mvi(state, &state->d); 
+	break; 
+
+    case 0x17: 
+        ral(state); 
 	break; 
   }
    
