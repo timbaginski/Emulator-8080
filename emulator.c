@@ -165,6 +165,16 @@ void rar(State8080 *state){
 }
 
 /* 
+ * Implement shld opcode
+ */
+void shld(State8080 *state){
+  uint16_t address = make_word(state->memory[state->pc + 1], state->memory[state->pc + 2]); 
+  state->memory[address] = state->l; 
+  state->memory[address + 1] = state->h; 
+  state->pc += 2; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -294,6 +304,17 @@ int emulate(State8080 *state) {
 
     case 0x1f: 
         rar(state); 
+	break;
+
+    case 0x20: 
+	break; 
+
+    case 0x21: 
+	lxi(state, &state->h, &state->l); 
+	break; 
+
+    case 0x22: 
+	shld(state); 
 	break;
   }
    
