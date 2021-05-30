@@ -155,6 +155,16 @@ void ral(State8080 *state){
 }
 
 /* 
+ * implement the RAR opcode
+ */
+void rar(State8080 *state){
+  uint8_t temp;
+  temp = state->cc.cy; 
+  state->cc.cy = state->a & 1; 
+  state->a = (state->a >> 1) | (temp << 7); 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -280,7 +290,11 @@ int emulate(State8080 *state) {
 
     case 0x1e: 
         mvi(state, &state->h); 
-        break; 	
+        break;
+
+    case 0x1f: 
+        rar(state); 
+	break;
   }
    
   state->pc += 1; 
