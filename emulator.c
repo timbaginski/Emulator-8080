@@ -222,6 +222,34 @@ void lxi_sp(State8080 *state){
 }
 
 /* 
+ * Implement sta opcode 
+ */
+void sta(State8080 *state, uint8_t *a){
+  uint16_t address = make_word(state->memory[state->pc + 1], state->memory[state->pc + 2]);
+  state->memory[address] = state->a; 
+  state->pc += 2;
+}
+
+/* 
+ * Implement inx for the stack pointer
+ */
+void inx_sp(State8080 *state){
+  state->sp = state->sp + 1; 
+}
+
+/* 
+ * Implement inr for memory 
+ */
+void inr_memory(State8080 *state, uint8_t *a, uint8_t *b){
+  uint16_t address = make_word(*a, *b); 
+  uint16_t answer; 
+  answer = state->memory[address] + 1; 
+  state->memory[address] = answer & 0xff; 
+  flags_arithmetic(state, answer); 
+   
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -420,6 +448,18 @@ int emulate(State8080 *state) {
 
     case 0x31:
 	lxi_sp(state); 
+	break; 
+
+    case 0x32:
+	sta(state, &state->a); 
+	break;
+
+    case 0x33:
+	inx_sp(state); 
+	break;
+
+    case 0x34: 
+        inr_memory(state, &state->h, &state->l); 
 	break; 
   }
    
