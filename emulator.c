@@ -195,6 +195,33 @@ void daa(State8080 *state){
 }
 
 /* 
+ * Implement the lhld opcode
+ */
+void lhld(State8080 *state){
+  uint16_t address = make_word(state->memory[state->pc + 1], state->memory[state->pc + 2]);
+  state->memory[address] = state->l; 
+  state->memory[address + 1] = state->h; 
+  state->pc += 2; 
+}
+
+/* 
+ * Implement the cma opcode
+ */
+void cma(uint8_t *a){
+  *a = ~(*a); 
+}
+
+/* 
+ * Implement lxi for the stack pointer
+ */
+void lxi_sp(State8080 *state){
+  uint8_t byte2 = state->memory[state->pc + 1]; 
+  uint8_t byte3 = state->memory[state->pc + 2]; 
+  state->sp = make_word(byte2, byte3); 
+  state->pc += 2; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -355,6 +382,44 @@ int emulate(State8080 *state) {
 
     case 0x27: 
 	daa(state); 
+	break; 
+
+    case 0x28:
+	break; 
+
+    case 0x29:
+	dad(state, &state->h, &state->l, &state->h, &state->l); 
+	break;
+
+    case 0x2a:
+        lhld(state); 
+	break; 
+
+    case 0x2b:
+	dcx(&state->h, &state->l); 
+	break; 
+
+    case 0x2c: 
+	inr(state, &state->l); 
+	break; 
+
+    case 0x2d:
+	dcr(state, &state->l);
+	break;
+
+    case 0x2e:
+	mvi(state, &state->l); 
+	break; 
+
+    case 0x2f: 
+	cma(&state->a); 
+	break; 
+
+    case 0x30: 
+	break; 
+
+    case 0x31:
+	lxi_sp(state); 
 	break; 
   }
    
