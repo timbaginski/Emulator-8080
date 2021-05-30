@@ -175,6 +175,26 @@ void shld(State8080 *state){
 }
 
 /* 
+ * Implement daa opcode
+ */
+void daa(State8080 *state){
+  uint16_t res; 
+  uint8_t smallest_four = state->a & 0xff; 
+  if(smallest_four > 9 || state->cc.ac){
+    res = state->a + 6;
+    flags_arithmetic(state, res); 
+    state->a = res & 0xff;
+  }
+  uint8_t most_four = state->a >> 4;
+  if(most_four > 9 || state->cc.cy){
+    most_four += 6; 
+  } 
+  res = (most_four << 4) | smallest_four; 
+  flags_arithmetic(state, res); 
+  state->a = res & 0xff;
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -316,6 +336,26 @@ int emulate(State8080 *state) {
     case 0x22: 
 	shld(state); 
 	break;
+
+    case 0x23: 
+	inx(&state->h, &state->l); 
+	break; 
+
+    case 0x24: 
+	inr(state, &state->h); 
+	break; 
+
+    case 0x25:
+        dcr(state, &state->h);	
+	break;
+
+    case 0x26: 
+        mvi(state, &state->l); 
+	break; 
+
+    case 0x27: 
+	daa(state); 
+	break; 
   }
    
   state->pc += 1; 
