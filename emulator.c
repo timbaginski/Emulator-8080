@@ -270,6 +270,13 @@ void mvi_memory(State8080 *state, uint8_t *a, uint8_t *b){
 }
 
 /* 
+ * Implement the stc opcode
+ */
+void stc(State8080 *state){
+  state->cc.cy = 1; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -489,6 +496,19 @@ int emulate(State8080 *state) {
     case 0x36:
         mvi_memory(state, &state->h, &state->l); 
 	break;
+
+    case 0x37:
+	stc(state); 
+	break;
+
+    case 0x38:
+	break;
+
+    case 0x39:; 
+	uint8_t temp1 = state->sp >> 8; 
+	uint8_t temp2 = state->sp & 0xff; 
+	dad(state, &state->h, &state->l, &temp1, &temp2); 
+	break; 
 
   }
    
