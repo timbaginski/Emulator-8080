@@ -286,6 +286,20 @@ void lda(State8080 *state){
 }
 
 /* 
+ * Implement the dcx SP opcodes
+ */
+void dcx_sp(State8080 *state){
+  state->sp--; 
+}
+
+/*
+ * Implement the CMC opcode
+ */
+void cmc(State8080 *state){
+  state->cc.cy = !state->cc.cy; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -521,7 +535,27 @@ int emulate(State8080 *state) {
     
     case 0x3a:
 	lda(state); 
+        break;
+     
+    case 0x3b:
+        dcx_sp(state);	
+        break;
+
+    case 0x3c:
+        inr(state, &state->a);	
         break;	
+
+    case 0x3d:
+	dcr(state, &state->a); 
+	break;
+
+    case 0x3e:
+	mvi(state, &state->a); 
+	break;
+
+    case 0x3f:
+	cmc(state);
+	break;
 
   }
    
