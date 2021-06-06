@@ -277,6 +277,15 @@ void stc(State8080 *state){
 }
 
 /* 
+ * Implement the lda opcode
+ */
+void lda(State8080 *state){
+  uint16_t address = make_word(state->memory[state->pc + 1], state->memory[state->pc + 2]);
+  state->a = state->memory[address]; 
+  state->pc += 2; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -508,7 +517,11 @@ int emulate(State8080 *state) {
 	uint8_t temp1 = state->sp >> 8; 
 	uint8_t temp2 = state->sp & 0xff; 
 	dad(state, &state->h, &state->l, &temp1, &temp2); 
-	break; 
+	break;
+    
+    case 0x3a:
+	lda(state); 
+        break;	
 
   }
    
