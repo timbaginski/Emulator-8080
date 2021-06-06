@@ -250,6 +250,26 @@ void inr_memory(State8080 *state, uint8_t *a, uint8_t *b){
 }
 
 /* 
+ * Implement dcr for memory
+ */
+void dcr_memory(State8080 *state, uint8_t *a, uint8_t *b){
+  uint16_t address = make_word(*a, *b); 
+  uint16_t answer; 
+  answer = state->memory[address] - 1; 
+  state->memory[address] = answer & 0xff; 
+  flags_arithmetic(state, answer); 
+}
+
+/* 
+ * Implement MVI opcode for memory
+ */
+void mvi_memory(State8080 *state, uint8_t *a, uint8_t *b){
+  uint16_t address = make_word(*a, *b); 
+  state->memory[address] = state->memory[state->pc + 1]; 
+  state->pc++;  
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -461,6 +481,15 @@ int emulate(State8080 *state) {
     case 0x34: 
         inr_memory(state, &state->h, &state->l); 
 	break; 
+
+    case 0x35:
+	dcr_memory(state, &state->h, &state->l); 
+	break;
+
+    case 0x36:
+        mvi_memory(state, &state->h, &state->l); 
+	break;
+
   }
    
   state->pc += 1; 
