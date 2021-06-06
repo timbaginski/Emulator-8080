@@ -557,6 +557,42 @@ int emulate(State8080 *state) {
 	cmc(state);
 	break;
 
+    case 0x40:
+	state->b = state->b; 
+	break; 
+ 
+    case 0x41:
+	state->b = state->c; 
+	break; 
+
+    case 0x42:
+	state->b = state->d; 
+	break; 
+
+    case 0x43:
+	state->b = state->e; 
+	break;
+
+    case 0x44: 
+	state->b = state->h; 
+	break; 
+
+    case 0x45:
+	state->b = state->l; 
+	break; 
+
+    case 0x46: 
+	state->b = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x47:
+	state->b = state->a; 
+	break;
+
+    case 0x48:
+	state->c = state->b; 
+	break;
+
   }
    
   state->pc += 1; 
