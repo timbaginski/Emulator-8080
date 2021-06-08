@@ -593,6 +593,168 @@ int emulate(State8080 *state) {
 	state->c = state->b; 
 	break;
 
+    case 0x49:
+        state->c = state->c; 	
+	break;
+
+    case 0x4a: 
+	state->c = state->d;
+	break; 
+
+    case 0x4b: 
+	state->c = state->e;
+	break;
+
+    case 0x4c: 
+	state->c = state->h; 
+	break; 
+
+    case 0x4d:
+	state->c = state->l; 
+	break;
+
+    case 0x4e:
+	state->c = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x4f:
+	state->c = state->a; 
+	break; 
+
+    case 0x50:
+        state->d = state->b;	
+	break;
+
+    case 0x51:
+	state->d = state->c;
+	break;
+
+    case 0x52:
+	state->d = state->d; 
+	break; 
+
+    case 0x53:
+        state->d = state->e; 	
+	break;
+
+    case 0x54: 
+	state->d = state->h; 
+	break; 
+
+    case 0x55: 
+	state->d = state->l; 
+	break; 
+
+    case 0x56:
+	state->d = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x57:
+	state->d = state->a;
+	break;
+
+    case 0x58:
+	state->e = state->b; 
+	break; 
+
+    case 0x59:
+	state->e = state->c; 
+	break; 
+
+    case 0x5a:
+	state->e = state->d; 
+	break; 
+
+    case 0x5b:
+	state->e = state->e; 
+	break; 
+
+    case 0x5c:
+	state->e = state->h; 
+	break; 
+
+    case 0x5d: 
+	state->e = state->l; 
+	break; 
+
+    case 0x5e: 
+	state->e = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x5f: 
+	state->e = state->a; 
+	break; 
+
+    case 0x60: 
+	state->h = state->b; 
+	break; 
+
+    case 0x61:
+	state->h = state->c; 
+	break; 
+
+    case 0x62: 
+	state->h = state->d; 
+	break; 
+
+    case 0x63:
+	state->h = state->e; 
+	break; 
+
+    case 0x64:
+	state->h = state->h; 
+	break; 
+
+    case 0x65:
+	state->h = state->l; 
+	break; 
+
+    case 0x66:
+	state->h = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x67:
+	state->h = state->a; 
+	break;
+
+    case 0x68:
+        state->l = state->b;	
+	break;
+
+    case 0x69:
+	state->l = state->c; 
+	break; 
+
+    case 0x6a: 
+	state->l = state->d; 
+	break; 
+
+    case 0x6b:
+	state->l = state->e; 
+	break; 
+
+    case 0x6c:
+	state->l = state->h; 
+	break; 
+
+    case 0x6d:
+	state->l = state->l; 
+	break; 
+
+    case 0x6e: 
+	state->l = state->memory[make_word(state->h, state->l)]; 
+	break; 
+
+    case 0x6f: 
+	state->l = state->a; 
+	break; 
+
+    case 0x70: 
+	state->memory[make_word(state->h, state->l)] = state->b; 
+	break; 
+
+    
+
   }
    
   state->pc += 1; 
