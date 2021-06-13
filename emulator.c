@@ -753,7 +753,64 @@ int emulate(State8080 *state) {
 	state->memory[make_word(state->h, state->l)] = state->b; 
 	break; 
 
-    
+    case 0x71: 
+	state->memory[make_word(state->h, state->l)] = state->c; 
+	break; 
+
+    case 0x72:
+        state->memory[make_word(state->h, state->l)] = state->d;	
+	break;
+
+    case 0x73:
+        state->memory[make_word(state->h, state->l)] = state->e; 	
+	break;
+
+    case 0x74:
+        state->memory[make_word(state->h, state->l)] = state->h; 	
+	break;
+
+    case 0x75:
+	state->memory[make_word(state->h, state->l)] = state->l; 
+	break; 
+
+    case 0x76:
+	break;
+
+    case 0x77:
+	state->memory[make_word(state->h, state->l)] = state->a; 
+	break; 
+
+    case 0x78:
+	state->a = state->b; 
+	break; 
+
+    case 0x79:
+	state->a = state->c; 
+	break; 
+
+    case 0x7a:
+	state->a = state->d; 
+	break;
+
+    case 0x7b:
+	state->a = state->e; 
+	break;
+
+    case 0x7c:
+	state->a = state->h; 
+	break; 
+
+    case 0x7d:
+	state->a = state->l; 
+	break; 
+
+    case 0x7e: 
+	state->a = state->memory[make_word(state->h, state->l)]; 
+	break; 
+        
+    case 0x7f:
+	state->a = state->a;
+	break;
 
   }
    
