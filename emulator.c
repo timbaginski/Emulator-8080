@@ -337,6 +337,19 @@ void sub(State8080 *state, uint8_t x){
   state->a = answer & 0xff; 
 }
 
+/*
+ * Implement the sbb opcodes
+ */ 
+void sbb(State8080 *state, uint8_t x){
+  uint16_t x16 = (uint16_t) x; 
+  uint16_t a16 = (uint16_t) state->a; 
+  uint16_t carry = (uint16_t) state->cc.cy; 
+  uint16_t answer = a16 - x16 - carry; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = answer & 0xff; 
+}
+
 /* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
@@ -944,6 +957,38 @@ int emulate(State8080 *state) {
 
     case 0x97:
 	sub(state, state->a); 
+	break;
+
+    case 0x98:
+	sbb(state, state->b); 
+	break; 
+
+    case 0x99:
+	sbb(state, state->c); 
+	break; 
+
+    case 0x9a:
+	sbb(state, state->d); 
+	break; 
+
+    case 0x9b:
+	sbb(state, state->e); 
+	break; 
+
+    case 0x9c:
+	sbb(state, state->h); 
+	break; 
+
+    case 0x9d:
+	sbb(state, state->l); 
+	break; 
+
+    case 0x9e:
+	sbb(state, state->memory[make_word(state->h, state->l)]); 
+	break; 
+
+    case 0x9f:
+	sbb(state, state->a);
 	break;
   }
    
