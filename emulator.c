@@ -350,6 +350,18 @@ void sbb(State8080 *state, uint8_t x){
   state->a = answer & 0xff; 
 }
 
+/*
+ * Implement the ana opcodes
+ */
+void ana(State8080 *state, uint8_t x){
+  uint16_t x16 = (uint16_t) x; 
+  uint16_t a16 = (uint16_t) state->a; 
+  uint16_t answer = a16 & x16; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = answer & 0xff; 
+}
+
 /* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
@@ -990,6 +1002,38 @@ int emulate(State8080 *state) {
     case 0x9f:
 	sbb(state, state->a);
 	break;
+
+    case 0xa0:
+	ana(state, state->b); 
+	break; 
+
+    case 0xa1:
+	ana(state, state->c); 
+	break; 
+
+    case 0xa2:
+	ana(state, state->d); 
+	break; 
+
+    case 0xa3:
+	ana(state, state->e); 
+	break; 
+
+    case 0xa4:
+	ana(state, state->h); 
+	break; 
+
+    case 0xa5:
+	ana(state, state->l); 
+	break; 
+
+    case 0xa6:
+	ana(state, state->memory[make_word(state->h, state->l)]); 
+	break; 
+
+    case 0xa7:
+	ana(state, state->a); 
+	break; 
   }
    
   state->pc += 1; 
