@@ -300,6 +300,16 @@ void cmc(State8080 *state){
 }
 
 /* 
+ * Implement the add opcodes
+ */
+void add(State8080 *state, uint8_t *a, uint8_t *b){
+  uint16_t answer = *a + *b; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = *a + *b; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -811,6 +821,38 @@ int emulate(State8080 *state) {
     case 0x7f:
 	state->a = state->a;
 	break;
+
+    case 0x80:
+        add(state, &state->a, &state->b); 	
+	break;
+
+    case 0x81:
+	add(state, &state->a, &state->c);
+	break;
+
+    case 0x82:
+	add(state, &state->a, &state->d);
+	break; 
+
+    case 0x83:
+	add(state, &state->a, &state->e); 
+	break; 
+
+    case 0x84:
+	add(state, &state->a, &state->h);
+	break; 
+
+    case 0x85:
+	add(state, &state->a, &state->l); 
+	break; 
+
+    case 0x86:
+	add(state, &state->a, &state->memory[make_word(state->h, state->l)]); 
+	break; 
+
+    case 0x87:
+	add(state, &state->a, &state->a); 
+	break; 
 
   }
    
