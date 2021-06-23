@@ -303,7 +303,9 @@ void cmc(State8080 *state){
  * Implement the add opcodes
  */
 void add(State8080 *state, uint8_t *a, uint8_t *b){
-  uint16_t answer = *a + *b; 
+  uint16_t a16 = (uint16_t) *a; 
+  uint16_t b16 = (uint16_t) *b;
+  uint16_t answer = a16 + b16; 
   flags_arithmetic(state, answer); 
   state->cc.cy = answer > 0xff; 
   state->a = answer & 0xff; 
@@ -318,6 +320,18 @@ void adc(State8080 *state, uint8_t *a, uint8_t *b){
   uint16_t a16 = (uint16_t) *a; 
   uint16_t b16 = (int16_t) *b; 
   uint16_t answer = a16 + b16 + carry; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = answer & 0xff; 
+}
+
+/* 
+ * Implement the subtract opcodes
+ */
+void sub(State8080 *state, uint8_t x){
+  uint16_t x16 = (uint16_t) x; 
+  uint16_t a16 = (uint16_t)  state->a;
+  uint16_t answer = a16 - x16; 
   flags_arithmetic(state, answer); 
   state->cc.cy = answer > 0xff; 
   state->a = answer & 0xff; 
@@ -899,6 +913,38 @@ int emulate(State8080 *state) {
     case 0x8f:
 	adc(state, &state->a, &state->a);
 	break; 
+
+    case 0x90:
+	sub(state, state->b); 
+	break; 
+
+    case 0x91:
+	sub(state, state->c); 
+	break;
+
+    case 0x92:
+	sub(state, state->d); 
+	break; 
+
+    case 0x93:
+	sub(state, state->e); 
+	break; 
+    
+    case 0x94:
+	sub(state, state->h); 
+	break; 
+
+    case 0x95:
+	sub(state, state->l); 
+	break; 
+
+    case 0x96: 
+	sub(state, state->memory[make_word(state->h, state->l)]); 
+	break; 
+
+    case 0x97:
+	sub(state, state->a); 
+	break;
   }
    
   state->pc += 1; 
