@@ -306,7 +306,21 @@ void add(State8080 *state, uint8_t *a, uint8_t *b){
   uint16_t answer = *a + *b; 
   flags_arithmetic(state, answer); 
   state->cc.cy = answer > 0xff; 
-  state->a = *a + *b; 
+  state->a = answer & 0xff; 
+}
+
+/*
+ * Implement the ADC opcodes
+ */
+void adc(State8080 *state, uint8_t *a, uint8_t *b){
+  // turn all into uint_16 so they can be added 
+  uint16_t carry = (uint16_t) state->cc.cy; 
+  uint16_t a16 = (uint16_t) *a; 
+  uint16_t b16 = (int16_t) *b; 
+  uint16_t answer = a16 + b16 + carry; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = answer & 0xff; 
 }
 
 /* 
@@ -852,8 +866,39 @@ int emulate(State8080 *state) {
 
     case 0x87:
 	add(state, &state->a, &state->a); 
+	break;
+
+    case 0x88:
+        adc(state, &state->a, &state->b);
+        break;	
+
+    case 0x89:
+	adc(state, &state->a, &state->c); 
 	break; 
 
+    case 0x8a:
+	adc(state, &state->a, &state->d);
+	break; 
+
+    case 0x8b:
+	adc(state, &state->a, &state->e); 
+	break; 
+
+    case 0x8c:
+	adc(state, &state->a, &state->h); 
+	break; 
+
+    case 0x8d:
+	adc(state, &state->a, &state->l);
+	break; 
+
+    case 0x8e:
+	adc(state, &state->a, &state->memory[make_word(state->h, state->l)]);
+	break;
+
+    case 0x8f:
+	adc(state, &state->a, &state->a);
+	break; 
   }
    
   state->pc += 1; 
