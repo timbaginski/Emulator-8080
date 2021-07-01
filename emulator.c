@@ -375,6 +375,18 @@ void xra(State8080 *state, uint8_t x){
 }
 
 /* 
+ * Implement the ora opcodes
+ */
+void ora(State8080 *state, uint8_t x){
+  uint16_t a16 = (uint16_t) state->a; 
+  uint16_t x16 = (uint16_t) x; 
+  uint16_t answer = a16 | x16; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+  state->a = answer & 0xff; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1078,6 +1090,39 @@ int emulate(State8080 *state) {
     case 0xaf:
 	xra(state, state->a); 
 	break;
+
+    case 0xb0:
+	ora(state, state->b); 
+	break; 
+	
+    case 0xb1:
+	ora(state, state->c); 
+	break; 
+
+    case 0xb2:
+	ora(state, state->d);
+	break; 
+
+    case 0xb3:
+	ora(state, state->e); 
+        break; 
+
+    case 0xb4:
+	ora(state, state->h); 
+        break; 
+
+    case 0xb5:
+	ora(state, state->l); 
+        break; 
+
+    case 0xb6:
+	ora(state, state->memory[make_word(state->h, state->l)]); 
+	break; 
+    
+    case 0xb7:
+        ora(state, state->a); 
+        break; 
+	
   }
    
   state->pc += 1; 
