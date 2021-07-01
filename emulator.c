@@ -387,6 +387,17 @@ void ora(State8080 *state, uint8_t x){
 }
 
 /* 
+ * Implement the cmp opcodes
+ */
+void cmp(State8080 *state, uint8_t x){
+  uint16_t a16 = (uint16_t) state->a; 
+  uint16_t x16 = (uint16_t) x;
+  uint16_t answer = a16 - x16; 
+  flags_arithmetic(state, answer); 
+  state->cc.cy = answer > 0xff; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1122,7 +1133,38 @@ int emulate(State8080 *state) {
     case 0xb7:
         ora(state, state->a); 
         break; 
-	
+
+    case 0xb8:
+	cmp(state, state->b); 
+	break;
+
+    case 0xb9:
+	cmp(state, state->c); 
+	break; 
+
+    case 0xba:
+	cmp(state, state->d); 
+	break; 
+
+    case 0xbb:
+	cmp(state, state->e); 
+	break; 
+
+    case 0xbc:
+	cmp(state, state->h); 
+	break; 
+
+    case 0xbd:
+	cmp(state, state->l); 
+	break; 
+
+    case 0xbe:
+	cmp(state, state->memory[make_word(state->h, state->l)]);
+	break; 
+
+    case 0xbf:
+	cmp(state, state->a); 
+	break; 
   }
    
   state->pc += 1; 
