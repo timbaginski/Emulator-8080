@@ -1263,6 +1263,13 @@ int emulate(State8080 *state) {
     case 0xc4:
 	call_adr(state, next_word(state)); 
 	break; 
+
+    case 0xc5:
+	push_word(state, make_word(state->c, state->b)); 
+	break; 
+
+    case 0xc6:
+	break; 
   }
    
   state->pc += 1; 
