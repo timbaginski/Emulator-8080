@@ -398,6 +398,27 @@ void cmp(State8080 *state, uint8_t x){
 }
 
 /* 
+ * Implement the RET function 
+ */
+void ret(State8080 *state){
+  uint8_t byte1; 
+  uint8_t byte2; 
+  byte1 = state->memory[state->sp]; 
+  byte2 = state->memory[state->sp + 1]; 
+  state->pc = make_word(byte1, byte2); 
+  state->sp = state->sp + 2; 
+}
+
+/* 
+ * Implement conditional return opcodes
+ */
+void ret_cond(State8080 *state, uint8_t cond){
+  if(cond){
+    ret(state); 
+  }
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1165,6 +1186,10 @@ int emulate(State8080 *state) {
     case 0xbf:
 	cmp(state, state->a); 
 	break; 
+
+    case 0xc0:
+	ret_cond(state, !state->cc.z); 
+	break;
   }
    
   state->pc += 1; 
