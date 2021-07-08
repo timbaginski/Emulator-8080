@@ -419,6 +419,15 @@ void ret_cond(State8080 *state, uint8_t cond){
 }
 
 /* 
+ * Implement pop opcodes
+ */
+void pop_pair(State8080 *state, uint8_t *hi, uint8_t *lo){
+  *hi = state->memory[state->sp]; 
+  *lo = state->memory[state->sp+1]; 
+  state->sp = state->sp + 2; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1190,6 +1199,10 @@ int emulate(State8080 *state) {
     case 0xc0:
 	ret_cond(state, !state->cc.z); 
 	break;
+
+    case 0xc1:
+	pop_pair(state, &state->c, &state->b); 
+	break; 
   }
    
   state->pc += 1; 
