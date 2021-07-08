@@ -1268,7 +1268,9 @@ int emulate(State8080 *state) {
 	push_word(state, make_word(state->c, state->b)); 
 	break; 
 
-    case 0xc6:
+    case 0xc6:;
+	uint8_t next = next_byte(state); 
+	add(state, &state->a, &next); 
 	break; 
   }
    
