@@ -476,6 +476,16 @@ void call_adr(State8080 *state, uint16_t adr){
 }
 
 /* 
+ * Implement call condition opcodes
+ */
+void call_cond(State8080 *state, uint8_t cond){
+  uint16_t adr = next_word(state); 
+  if(cond){
+    call_adr(state, adr); 
+  }
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1271,7 +1281,31 @@ int emulate(State8080 *state) {
     case 0xc6:;
 	uint8_t next = next_byte(state); 
 	add(state, &state->a, &next); 
-	break; 
+	break;
+    
+    case 0xc7:
+        call_adr(state, 0x00); 
+	break;
+
+    case 0xc8:
+	ret_cond(state, state->cc.z); 
+	break;	
+
+    case 0xc9:
+	ret(state); 
+	break;
+
+    case 0xca:
+	jmp_cond(state, state->cc.z); 
+	break;
+
+    case 0xcb:
+	break;
+
+    case 0xcc:
+	call_cond(state, state->cc.z);
+	break;
+	
   }
    
   state->pc += 1; 
