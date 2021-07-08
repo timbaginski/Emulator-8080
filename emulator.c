@@ -12,6 +12,18 @@ uint16_t make_word(uint8_t left, uint8_t right) {
 }
 
 /* 
+ * Get the next word and increment the program counter
+ */
+uint16_t next_word(State8080 *state){
+  uint8_t left; 
+  uint8_t right; 
+  left = state->memory[state->pc+1]; 
+  right = state->memory[state->pc+2]; 
+  state->pc += 2; 
+  return make_word(left, right); 
+}
+
+/* 
  * return the parity of the given value
  */
 int parity(uint8_t val) {
@@ -425,6 +437,23 @@ void pop_pair(State8080 *state, uint8_t *hi, uint8_t *lo){
   *hi = state->memory[state->sp]; 
   *lo = state->memory[state->sp+1]; 
   state->sp = state->sp + 2; 
+}
+
+/* 
+ * Implement jmp 
+ */
+void jmp(State8080 *state, uint16_t adr){
+  state->pc = adr; 
+}
+
+/*
+ * Implement conditional jump opcodes
+ */
+void jmp_cond(State8080 *state, uint8_t cond){
+  uint16_t adr = next_word(state); 
+  if(cond){
+    jmp(state, adr); 
+  }
 }
 
 /* 
@@ -1202,7 +1231,11 @@ int emulate(State8080 *state) {
 
     case 0xc1:
 	pop_pair(state, &state->c, &state->b); 
-	break; 
+	break;
+
+    case 0xc2:
+	jmp_cond(state, !state->cc.z); 
+        break; 
   }
    
   state->pc += 1; 
