@@ -457,6 +457,25 @@ void jmp_cond(State8080 *state, uint8_t cond){
 }
 
 /* 
+ * push a word onto the stack
+ */
+void push_word(State8080 *state, uint16_t word){
+  uint8_t hi = (word >> 8) & 0xff; 
+  uint8_t lo = word & 0xff; 
+  state->sp = state->sp - 2; 
+  state->memory[state->sp] = hi; 
+  state->memory[state->sp+1] = lo; 
+}
+
+/* 
+ * Call and address by pushing the program counter onto the stack, and then jumping to it
+ */
+void call_adr(State8080 *state, uint16_t adr){
+  push_word(state, state->pc); 
+  jmp(state, adr); 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1235,7 +1254,15 @@ int emulate(State8080 *state) {
 
     case 0xc2:
 	jmp_cond(state, !state->cc.z); 
-        break; 
+        break;
+
+    case 0xc3:
+	jmp(state, next_word(state)); 
+	break;
+
+    case 0xc4:
+	call_adr(state, next_word(state)); 
+	break; 
   }
    
   state->pc += 1; 
