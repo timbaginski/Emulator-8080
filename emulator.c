@@ -1309,6 +1309,31 @@ int emulate(State8080 *state) {
     case 0xcd:
 	call_adr(state, next_word(state)); 
 	break;
+
+    case 0xce:;
+	uint8_t data = next_byte(state) + state->cc.cy; 
+	add(state, &state->a, &data); 
+	break;
+
+    case 0xcf:
+	call_adr(state, 0x08); 
+	break;
+
+    case 0xd0:
+	ret_cond(state, !state->cc.cy);
+	break;	
+
+    case 0xd1:
+	pop_pair(state, &state->e, &state->d);
+	break;
+
+    case 0xd2:
+	jmp_cond(state, !state->cc.cy); 
+	break;
+
+    case 0xd3:
+
+	break;
 	
   }
    
