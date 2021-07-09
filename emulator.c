@@ -1305,6 +1305,10 @@ int emulate(State8080 *state) {
     case 0xcc:
 	call_cond(state, state->cc.z);
 	break;
+
+    case 0xcd:
+	call_adr(state, next_word(state)); 
+	break;
 	
   }
    
