@@ -1332,8 +1332,21 @@ int emulate(State8080 *state) {
 	break;
 
     case 0xd3:
-
+	next_byte(state); 
 	break;
+
+    case 0xd4:
+	call_cond(state, !state->cc.cy); 
+	break; 
+
+    case 0xd5:
+	push_word(state, make_word(state->e, state->d)); 
+	break;
+
+    case 0xd6:;
+    	uint8_t data2 = next_byte(state); 
+    	add(state, &state->a, &data2);  
+    	break;
 	
   }
    
