@@ -486,6 +486,15 @@ void call_cond(State8080 *state, uint8_t cond){
 }
 
 /* 
+ * Swap two pointers
+ */
+void swap_ptr(uint8_t *a, uint8_t *b){
+  uint8_t *temp = a; 
+  a = b; 
+  b = temp; 
+}
+
+/* 
  * purpose: obtain the current opcode, emulate accordingly 
  * input: State8080 state
  */
@@ -1347,6 +1356,105 @@ int emulate(State8080 *state) {
     	uint8_t data2 = next_byte(state); 
     	add(state, &state->a, &data2);  
     	break;
+
+    case 0xd7:
+	call_adr(state, 0x10); 
+	break;
+
+    case 0xd8:
+	ret_cond(state, state->cc.cy);
+	break;
+
+    case 0xd9:
+	break;
+
+    case 0xda:
+	jmp_cond(state, state->cc.cy); 
+	break;
+
+    case 0xdb:
+	next_byte(state);
+	break;
+
+    case 0xdc:
+	call_cond(state, state->cc.cy);
+	break;
+
+    case 0xdd:
+	break;
+
+    case 0xde:
+	sbb(state, next_byte(state)); 
+	break;
+	
+    case 0xdf:
+	call_adr(state, 0x18); 
+	break;
+
+    case 0xe0:
+	ret_cond(state, !state->cc.p); 
+	break;
+
+    case 0xe1:
+	pop_pair(state, &state->h, &state->l); 
+	break;
+
+    case 0xe2:
+	jmp_cond(state, !state->cc.p); 
+	break;
+
+    case 0xe3:
+	swap_ptr(&state->l, &state->memory[state->sp]); 
+	swap_ptr(&state->h, &state->memory[state->sp+1]);
+	break;
+
+    case 0xe4:
+	call_cond(state, !state->cc.p);
+	break;
+
+    case 0xe5:
+	push_word(state, make_word(state->h, state->l)); 
+	break;
+
+    case 0xe6:
+	ana(state, next_byte(state)); 
+	break;
+
+    case 0xe7:
+	call_adr(state, 0x20); 
+	break;
+
+    case 0xe8:
+	ret_cond(state, state->cc.p); 
+	break;
+
+    case 0xe9:
+	state->pc = make_word(state->h, state->l); 
+	break;
+
+    case 0xea:
+	jmp_cond(state, state->cc.p); 
+	break;
+
+    case 0xeb:
+	swap_ptr(&state->h, &state->d); 
+	swap_ptr(&state->l, &state->e);
+	break;
+
+    case 0xec:
+	call_cond(state, state->cc.p);
+	break;
+
+    case 0xed:
+	break;
+
+    case 0xee:
+	xra(state, next_byte(state)); 
+	break; 
+
+    case 0xef:
+	call_adr(state, 0x28); 
+	break;
 	
   }
    
