@@ -434,8 +434,8 @@ void ret_cond(State8080 *state, uint8_t cond){
  * Implement pop opcodes
  */
 void pop_pair(State8080 *state, uint8_t *hi, uint8_t *lo){
-  *hi = state->memory[state->sp]; 
-  *lo = state->memory[state->sp+1]; 
+  *lo = state->memory[state->sp]; 
+  *hi = state->memory[state->sp+1]; 
   state->sp = state->sp + 2; 
 }
 
@@ -463,8 +463,8 @@ void push_word(State8080 *state, uint16_t word){
   uint8_t hi = (word >> 8) & 0xff; 
   uint8_t lo = word & 0xff; 
   state->sp = state->sp - 2; 
-  state->memory[state->sp] = hi; 
-  state->memory[state->sp+1] = lo; 
+  state->memory[state->sp] = lo; 
+  state->memory[state->sp+1] = hi; 
 }
 
 /* 
@@ -1454,6 +1454,24 @@ int emulate(State8080 *state) {
 
     case 0xef:
 	call_adr(state, 0x28); 
+	break;
+
+    case 0xf0:
+	ret_cond(state, state->cc.s == 0); 
+	break;
+
+    case 0xf1:;
+	uint8_t stack_ptr; 
+	uint8_t acc_ptr; 
+	pop_pair(state, &acc_ptr, &stack_ptr); 
+
+	state->a = acc_ptr; 
+
+	state->cc.s = (stack_ptr & (1 << 7)) > 0; 
+	state->cc.z = (stack_ptr & (1 << 6)) > 0;
+        state->cc.ac = (stack_ptr & (1 << 4)) > 0; 
+	state->cc.p = (stack_ptr & (1 << 2)) > 0;
+	state->cc.cy = stack_ptr & 1; 	
 	break;
 	
   }
