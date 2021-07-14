@@ -1473,6 +1473,31 @@ int emulate(State8080 *state) {
 	state->cc.p = (stack_ptr & (1 << 2)) > 0;
 	state->cc.cy = stack_ptr & 1; 	
 	break;
+
+    case 0xf2:
+        jmp_cond(state, state->cc.s == 0); 
+        break;	
+
+    case 0xf3:
+	break;
+
+    case 0xf4:
+	call_cond(state, !state->cc.s); 
+	break;
+
+    case 0xf5:
+	state->memory[state->sp-1] = state->a; 
+
+	uint8_t flags = 0x0;
+	flags |= state->cc.cy; 
+	flags |= (1 << 1); 
+	flags |= (state->cc.p << 2); 
+	flags |= (state->cc.ac << 4); 
+	flags |= (state->cc.s << 7); 
+	
+	state->memory[state->sp-2] = flags; 
+	state->sp += -2; 
+	break;
 	
   }
    
