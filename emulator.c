@@ -1498,6 +1498,44 @@ int emulate(State8080 *state) {
 	state->memory[state->sp-2] = flags; 
 	state->sp += -2; 
 	break;
+
+    case 0xf6:
+	ora(state, next_byte(state));
+	break;
+
+    case 0xf7:
+	call_adr(state, 0x30);
+	break;
+
+    case 0xf8:
+	ret_cond(state, state->cc.s); 
+	break;
+
+    case 0xf9:
+	state->sp = make_word(state->h, state->l); 
+	break;
+
+    case 0xfa:
+	jmp_cond(state, state->cc.s); 
+	break;
+
+    case 0xfb:
+	break;
+
+    case 0xfc:
+	call_cond(state, state->cc.s);
+	break;
+
+    case 0xfd:
+	break;
+
+    case 0xfe:
+	cmp(state, next_byte(state)); 
+	break;
+
+    case 0xff:
+	call_adr(state, 0x38);
+	break;
 	
   }
    
