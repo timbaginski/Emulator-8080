@@ -1543,6 +1543,3 @@ int emulate(State8080 *state) {
   return 0; 
 }
 
-int main(int argc, const char *argv[]) {
-  return 0; 
-}
