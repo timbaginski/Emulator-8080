@@ -55,6 +55,22 @@ void load_invaders(uint8_t *memory, char *folder) {
 
 }
 
+void print_state(State8080 *state){
+  printf("a: %d\n", state->a);
+  printf("b: %d\n", state->b);
+  printf("c: %d\n", state->c);
+  printf("d: %d\n", state->d); 
+  printf("e: %d\n", state->e); 
+  printf("h: %d\n", state->h);
+  printf("l: %d\n", state->l); 
+  printf("cc.z: %d\n", state->cc.z); 
+  printf("cc.s: %d\n", state->cc.s); 
+  printf("cc.p: %d\n", state->cc.p); 
+  printf("cc.cy: %d\n", state->cc.cy);
+  printf("cc.ac: %d\n", state->cc.ac);
+
+}
+
 int main(){
   // initialize state
   State8080 *state; 
@@ -76,8 +92,18 @@ int main(){
   state->cc.p = 0; 
   state->cc.cy = 0; 
   state->cc.ac = 0; 
-
-
+  // load space invaders into memory 
+  load_invaders(state->memory, "rom");
+  
+  // run the file
+  for(int i = 0; i < 10; i++){
+    printf("opcode: %x\n", state->memory[state->pc]); 
+    emulate(state); 
+    print_state(state);
+  }
+  
+  free(state->memory);
+  free(state); 
   return 0;
 }
 

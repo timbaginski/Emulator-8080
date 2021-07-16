@@ -17,8 +17,8 @@ uint16_t make_word(uint8_t left, uint8_t right) {
 uint16_t next_word(State8080 *state){
   uint8_t left; 
   uint8_t right; 
-  left = state->memory[state->pc+1]; 
-  right = state->memory[state->pc+2]; 
+  right = state->memory[state->pc+1]; 
+  left = state->memory[state->pc+2]; 
   state->pc += 2; 
   return make_word(left, right); 
 }
